@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club of Intellectuals</title>
+    <style>
+        :root {
+            --color-bg: #07090e;
+            --color-sidebar: #0b0f17;
+            --color-card: #111622;
+            --color-card-hover: #161d2d;
+            --color-text: #f8fafc;
+            --color-text-muted: #94a3b8;
+            --color-accent: #38bdf8;
+            --color-accent-bg: rgba(56, 189, 248, 0.1);
+            --color-border: rgba(255, 255, 255, 0.06);
+            --color-border-hover: rgba(56, 189, 248, 0.3);
+            --color-telegram: #229ed9;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- Mobile Toggle Button --- */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: var(--color-sidebar);
+            border-bottom: 1px solid var(--color-border);
+            z-index: 100;
+            padding: 0 20px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--color-text);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 280px;
+            background-color: var(--color-sidebar);
+            border-right: 1px solid var(--color-border);
+            padding: 28px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 101;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .sidebar-header {
+            font-weight: 800;
+            font-size: 15px;
+            padding: 16px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(129, 140, 248, 0.05) 100%);
+            border: 1px solid var(--color-border-hover);
+            border-radius: var(--radius-md);
+            color: var(--color-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.05);
+            letter-spacing: -0.01em;
+        }
+
+        .nav-section-title {
+            padding: 16px 12px 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-text-muted);
+            font-weight: 700;
+        }
+
+        .nav-item {
+            padding: 11px 14px;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+            color: var(--color-text);
+        }
+
+        .nav-item.active {
+            color: var(--color-accent);
+            background-color: var(--color-accent-bg);
+            font-weight: 600;
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 50px 60px;
+            max-width: 1100px;
+        }
+
+        .content-view {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .content-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: var(--color-text);
+            letter-spacing: -0.02em;
+        }
+
+        p {
+            color: var(--color-text-muted);
+            line-height: 1.7;
+            margin-bottom: 24px;
+            font-size: 15px;
+        }
+
+        h3 {
+            font-size: 19px;
+            margin: 32px 0 12px;
+            color: var(--color-text);
+            letter-spacing: -0.01em;
+        }
+
+        /* --- Cards Grid --- */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 32px;
+        }
+
+        .card {
+            background-color: var(--color-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            text-decoration: none;
+            color: var(--color-text);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card:hover {
+            border-color: var(--color-border-hover);
+            transform: translateY(-4px);
+            background-color: var(--color-card-hover);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--color-text);
+            margin-bottom: 8px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+        }
+
+        .card-footer {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            color: var(--color-accent);
+            font-weight: 600;
+            gap: 6px;
+        }
+
+        /* --- Feedback Banner --- */
+        .feedback-banner {
+            margin-top: 24px;
+            background-color: var(--color-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.25s ease;
+        }
+
+        .feedback-banner:hover {
+            border-color: var(--color-border-hover);
+            background-color: var(--color-card-hover);
+        }
+
+        .feedback-content h3 {
+            margin: 0 0 6px 0;
+            color: var(--color-text);
+            font-size: 16px;
+        }
+
+        .feedback-content p {
+            margin: 0;
+            color: var(--color-text-muted);
+            font-size: 14px;
+        }
+
+        .btn-tg-small {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--color-telegram);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            font-size: 13.5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(34, 158, 217, 0.2);
+            white-space: nowrap;
+        }
+
+        .btn-tg-small:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* --- Upcoming Container --- */
+        .upcoming-container {
+            margin-top: 24px;
+            background: linear-gradient(135deg, rgba(17, 22, 34, 0.95) 0%, rgba(11, 15, 23, 0.98) 100%);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .upcoming-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #38bdf8, #818cf8);
+        }
+
+        .upcoming-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .upcoming-badge {
+            background-color: var(--color-accent-bg);
+            color: var(--color-accent);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .countdown-grid {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .countdown-box {
+            background-color: rgba(11, 15, 23, 0.6);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            min-width: 75px;
+            text-align: center;
+        }
+
+        .countdown-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--color-accent);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .countdown-label {
+            font-size: 10px;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 4px;
+        }
+
+        /* --- UI Elements & Steps --- */
+        .info-box {
+            background-color: var(--color-card);
+            border: 1px solid var(--color-border);
+            border-left: 4px solid var(--color-accent);
+            padding: 18px 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+            font-size: 14.5px;
+            line-height: 1.6;
+        }
+
+        .step-container {
+            background-color: var(--color-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .step-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- Zoomable Screenshots --- */
+        .screenshot-wrapper {
+            margin: 16px 0;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+            position: relative;
+            background: #000;
+            cursor: zoom-in;
+            transition: border-color 0.2s;
+        }
+
+        .screenshot-wrapper:hover {
+            border-color: var(--color-border-hover);
+        }
+
+        .screenshot-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .screenshot-wrapper:hover img {
+            transform: scale(1.01);
+        }
+
+        /* Modal for Image Zoom */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(7, 9, 14, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .image-modal img {
+            max-width: 95%;
+            max-height: 90vh;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border-hover);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: var(--color-text);
+            font-size: 36px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        details {
+            background-color: var(--color-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+
+        details:hover {
+            border-color: var(--color-border-hover);
+        }
+
+        summary {
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--color-accent);
+            outline: none;
+            font-size: 15px;
+        }
+
+        details p {
+            margin-top: 12px;
+            margin-bottom: 0;
+            color: var(--color-text);
+        }
+
+        footer {
+            margin-top: 60px;
+            font-size: 13px;
+            color: var(--color-text-muted);
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* --- Responsive Design --- */
+        @media(max-width: 768px) {
+            .mobile-header { display: flex; }
+            .sidebar { 
+                transform: translateX(-100%); 
+                top: 60px;
+                height: calc(100vh - 60px);
+            }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 84px 16px 40px 16px; }
+            .countdown-grid { gap: 8px; }
+            .countdown-box { min-width: 60px; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Mobile Top Navigation Header -->
+    <div class="mobile-header">
+        <div style="font-weight: 700; font-size: 14px;">🔥 Club of Intellectuals 🔥</div>
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div>
+            <div class="sidebar-header">
+                🔥 Club of Intellectuals 🔥
+            </div>
+            
+            <div class="nav-section-title">Главная</div>
+            <a class="nav-item active" onclick="showPage('welcome', event)">
+                <span>🏠</span> Welcome
+            </a>
+            
+            <div class="nav-section-title">Гайды</div>
+            <a class="nav-item" onclick="showPage('setup', event)">
+                <span>🚀</span> Регистрация и команда
+            </a>
+            
+            <div class="nav-section-title">Разборы заданий</div>
+            <a class="nav-item" onclick="showPage('web1', event)">
+                <span>🌐</span> «Hello World»  
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+        <!-- PAGE: WELCOME -->
+        <div id="welcome" class="content-view active">
+            <p>Добро пожаловать в базу знаний команды <b>🔥 Club of Intellectuals 🔥</b></p>
+            <p>Информационная безопасность — предмет сложный, и сходу тут мало что понятно. Наша цель — не дать вам готовые ответы, а объяснить понятным языком, как подступиться к заданию. Если застряли и не знаете, куда копать — почитайте наши разборы, вникните в логику, а потом попробуйте дорешать всё сами!</p>
+            
+            <!-- Блок обратной связи с иконкой Telegram -->
+            <div class="feedback-banner">
+                <div class="feedback-content">
+                    <h3>💡 Нашли ошибку или есть идея для улучшения?</h3>
+                    <p>Заметили опечатку, баг на сайте или хотите предложить крутую фичу? Напишите нам напрямую!</p>
+                </div>
+                <div>
+                    <a href="https://t.me/ilalutovinov?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%AF%20%D0%BD%D0%B0%D1%88%D0%B5%D0%BB%20%D0%BE%D1%88%D0%B8%D0%B1%D0%BA%D1%83%20%D0%B8%D0%BB%D0%B8%20%D1%85%D0%BE%D1%87%D1%83%20%D0%BF%D1%80%D0%B5%D0%B4%D0%BB%D0%BE%D0%B6%D0%B8%D1%82%D1%8C%20%D1%83%D0%BB%D1%83%D1%87%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%D0%BD%D0%B0%20%D1%81%D0%B0%D0%B9%D1%82%D0%B5%20Club%20of%20Intellectuals." 
+                       class="btn-tg-small" 
+                       target="_blank">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.534.26l.213-3.053 5.56-5.023c.242-.213-.054-.334-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.832.943z"/>
+                        </svg>
+                        Написать в Telegram
+                    </a>
+                </div>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card" onclick="showPage('setup', event)">
+                    <div>
+                        <div class="card-title"><span>🚀</span> Регистрация и команда</div>
+                        <div class="card-description">Пошаговое руководство по регистрации на платформу, смене языка и созданию команды.</div>
+                    </div>
+                    <div class="card-footer">Открыть гайд →</div>
+                </div>
+
+                <div class="card" onclick="showPage('web1', event)">
+                    <div>
+                        <div class="card-title"><span>🌐</span> Первое задание: «Hello World»</div>
+                        <div class="card-description">Знакомство с CTF-платформой и механикой сдачи цифровых трофеев-флагов (в формате FLAG{...})</div>
+                    </div>
+                    <div class="card-footer">Читать разбор →</div>
+                </div>
+            </div>
+
+            <!-- Анонс нового решения с таймером -->
+            <div class="upcoming-container">
+                <div class="upcoming-header">
+                    <div>
+                        <div class="upcoming-badge">⏳ Скоро в базе знаний</div>
+                        <div class="upcoming-title" style="margin-top: 8px; font-weight: 600; font-size: 16px;">📋 ИБ · ЛР 1. Инвентаризация активов</div>
+                        <p style="margin-bottom: 0; font-size: 14px;">Следующий подробный разбор лабораторной работы готовится к публикации. Следите за временем!</p>
+                    </div>
+                </div>
+
+                <div class="countdown-grid" id="countdown">
+                    <div class="countdown-box">
+                        <div class="countdown-value" id="days">00</div>
+                        <div class="countdown-label">Дней</div>
+                    </div>
+                    <div class="countdown-box">
+                        <div class="countdown-value" id="hours">00</div>
+                        <div class="countdown-label">Часов</div>
+                    </div>
+                    <div class="countdown-box">
+                        <div class="countdown-value" id="minutes">00</div>
+                        <div class="countdown-label">Минут</div>
+                    </div>
+                    <div class="countdown-box">
+                        <div class="countdown-value" id="seconds">00</div>
+                        <div class="countdown-label">Секунд</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE: SETUP -->
+        <div id="setup" class="content-view">
+            <h1>Регистрация и создание аккаунта</h1>
+            <h3>Инструкция по первому входу на соревновательную платформу.</h3>
+
+            <div class="info-box">
+                <b>Важно:</b> Проходите регистрацию заранее, чтобы в день лабораторной не тратить время на технические вопросы.
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">1. Переход на сайт</div>
+                <p>Перейдите на платформу по ссылке: <a href="https://ctf.devsec.edu.kg" target="_blank" style="color: var(--color-accent); text-decoration: none;">ctf.devsec.edu.kg</a>. Перед вами откроется главная страница сайта.</p>
+            </div>
+        
+            <div class="step-container">
+                <div class="step-title">2. Выбор русского языка</div>
+                <p>Чтобы вам было легче ориентироваться, вы можете переключить язык интерфейса. Нажмите на иконку языков в правом верхнем углу и выберите <b>«русский язык»</b> из выпадающего списка.</p>
+                <div class="screenshot-wrapper" onclick="openModal(this)">
+                    <img src="image_3a92a1.jpg" alt="Выбор языка">
+                </div>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">3. Начало регистрации</div>
+                <p>Вуаля! Теперь интерфейс сайта полностью на русском языке. Нажмите на кнопку <b>«Регистрация»</b> в правом верхнем углу панели управления, чтобы перейти к форме создания аккаунта.</p>
+                <div class="screenshot-wrapper" onclick="openModal(this)">
+                    <img src="image_3a95a1.jpg" alt="Начало регистрации">
+                </div>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">4. Заполнение данных профиля</div>
+                <p>Заполните регистрационную форму:</p>
+                <ul style="color: var(--color-text-muted); padding-left: 20px; line-height: 1.7; margin-bottom: 16px;">
+                    <li><b>Имя пользователя:</b> введите свое имя и фамилию на английском языке</li>
+                    <li><b>Почта:</b> укажите ваш актуальный email-адрес.</li>
+                    <li><b>Пароль:</b> придумайте надежный пароль для входа.</li>
+                    <li><b>Registration Code:</b> специальный код доступа.</li>
+                </ul>            
+
+                <div class="screenshot-wrapper" onclick="openModal(this)">
+                    <img src="image_3a9586.jpg" alt="Заполнение формы регистрации">
+                </div>
+
+                <div class="info-box" style="margin-top: 16px;">
+                    <b>Важно:</b> Введите свое имя и фамилию <u>строго на английском языке</u>, система обрабатывает их корректно только так!
+                </div>                
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">5. Где найти код регистрации?</div>
+                <p>Для соблюдения конфиденциальности код регистрации скрыт. Чтобы найти его:</p>
+                <ol style="color: var(--color-text-muted); padding-left: 20px; line-height: 1.7;">
+                    <li>Зайдите на <b>Google Диск</b>.</li>
+                    <li>Откройте презентацию под названием <b>InfoSec_Lecture_01.pptx</b>.</li>
+                    <li>На <b>16 слайде</b> вы найдете необходимый код регистрации.</li>
+                </ol>
+                <p style="margin-top: 12px;">Введите найденный код в поле, нажмите кнопку <b>«Войти»</b> — и вы успешно зарегистрируетесь на платформе!</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">6. Выбор действия</div>
+                <p>Сразу после успешной регистрации перед вами появится страница с выбором: вы можете присоединиться к существующей команде или создать собственную.</p>
+                <div class="screenshot-wrapper" onclick="openModal(this)">
+                    <img src="image_1.jpg" alt="Выбор действия">
+                </div>               
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">7. Вариант А — Присоединиться к команде</div>
+                <p>Если вы хотите войти в состав уже созданной команды, нажмите кнопку «Присоединиться к команде».</p>
+                <div class="screenshot-wrapper" onclick="openModal(this)">
+                    <img src="image_2.jpg" alt="Присоединиться к команде">
+                </div>
+
+                <p>В открывшихся полях введите название команды и её пароль (эти данные нужно предварительно спросить у участников или капитана этой команды).</p>
+                <div class="screenshot-wrapper" onclick="openModal(this)">
+                    <img src="image_3.jpg" alt="Ввод данных команды">
+                </div>
+
+                <p>Заполните поля, подтвердите ввод — и вуаля, вы в команде!</p>
+
+                <div class="info-box">
+                    <b>Важно:</b> Лимит участников до 4!
+                </div>                
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">8. Вариант Б — Создать свою команду</div>
+                <p>Если вы хотите собрать свою команду с нуля, нажмите кнопку «Создать команду».</p>
+                
+                <div class="screenshot-wrapper" onclick="openModal(this)">
+                    <img src="image_4.jpg" alt="Создать команду">
+                </div>
+
+                <p>Придумайте название команды строго на английском языке и задайте для неё надёжный пароль.</p>
+
+                <div class="screenshot-wrapper" onclick="openModal(this)">
+                    <img src="image_5.jpg" alt="Задание пароля команды">
+                </div>
+               
+                <div class="info-box">
+                    <b>Важно:</b> Обязательно запомните его или запишите, чтобы передать своим сокомандникам!
+                </div>
+                                    
+                <p>Завершите создание, после чего вы станете капитаном собственной команды на платформе.</p>
+            </div>
+        </div>
+
+        <!-- PAGE: WEB 1 -->
+        <div id="web1" class="content-view">
+            <h1>Первое задание: «Hello World» (+10 баллов)</h1>
+            <div>
+                <h3>Куда смотреть и в чем суть</h3>
+                <p>Обратите внимание на то, как приложение проверяет введенные данные. Флаг нужно вводить в строго определенном формате.</p>
+                <h3>Подсказки (откройте, если застряли)</h3>
+                <details>
+                    <summary>Историческая справка и суть задания</summary>
+                    <p>Традиция начинать знакомство с программированием или новой сферой с фразы «Hello World» зародилась еще на заре эпохи компьютеров и интернета — это самое первое приветственное действие, с которого все начинают свой путь.</p>
+                    <p>В формате соревнований CTF задача «Hello World» служит ровно той же цели — это ваше боевое крещение и знакомство с правилами платформы.</p>
+                    <p>В этом задании вы на практике поймете главную фишку всех подобных платформ: каждое выполненное задание завершается поиском и сдачей «флага».</p>
+                </details>
+                <details>
+                    <summary>Что такое флаг?</summary>
+                    <p>Флаг — это специальная секретная строка (обычно в определенном формате или в виде зашифрованного/понятного текста), которая доказывает, что вы успешно справились с задачей, взломали систему или нашли уязвимость. Сдавая флаг в специальное поле на сайте, вы подтверждаете свой результат и получаете за это баллы.</p>
+                </details>
+
+                <div class="step-container">
+                    <div class="step-title">1. Перейдите во вкладку</div>
+                    <p>Перейдите во вкладку «Задания» (Challenges) в верхнем меню платформы.</p>
+                    <div class="screenshot-wrapper" onclick="openModal(this)">
+                        <img src="image_6.jpg" alt="Переход к заданиям">
+                    </div>
+                </div>
+                <div class="step-container">
+                    <div class="step-title">2. Найдите карточку</div>
+                    <p>Найдите карточку или кнопку первого приветственного задания «Hello World», которое оценивается в 10 баллов, и нажмите на неё.</p>
+                    <div class="screenshot-wrapper" onclick="openModal(this)">
+                        <img src="image_7.jpg" alt="Карточка Hello World">
+                    </div>
+                </div>
+                <div class="step-container">
+                    <div class="step-title">3. Прочитайте описание</div>
+                    <p>Внимательно прочитайте текст описания: в нем объясняется базовая механика соревнований и то, как именно выглядит искомый флаг</p>
+                    <div class="screenshot-wrapper" onclick="openModal(this)">
+                        <img src="image_8.jpg" alt="Описание задания">
+                    </div>
+                </div>
+                <div class="step-container">
+                    <div class="step-title">4. Отыщите флаг</div>
+                    <p>Отыщите флаг, вставьте его в поле ввода ответа с надписью «Введите флаг» и нажмите кнопку отправки. Если всё сделано верно, система зачтет ответ, и на ваш счет мгновенно упадут первые 10 баллов</p>
+                    <div class="screenshot-wrapper" onclick="openModal(this)">
+                        <img src="image_9.jpg" alt="Отправка флага">
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <b>Подсказка:</b> Подумайте сами, как это связано с названием задания «Hello World» — попробуйте, ничего страшного не будет, если ответите неправильно
+                </div>   
+
+                <details>
+                    <summary>Ответ</summary>
+                    <p>FLAG{hello_world}</p>          
+                </details>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            Powered by 🔥 Club of Intellectuals 🔥
+        </footer>
+
+    </main>
+
+    <!-- Modal for Image Zooming -->
+    <div class="image-modal" id="imageModal" onclick="closeModal()">
+        <button class="image-modal-close">&times;</button>
+        <img id="modalImg" src="" alt="Zoomed Image">
+    </div>
+
+    <script>
+        function showPage(pageId, event) {
+            const views = document.querySelectorAll('.content-view');
+            views.forEach(view => view.classList.remove('active'));
+            
+            const items = document.querySelectorAll('.nav-item');
+            items.forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(pageId).classList.add('active');
+            
+            if (event && event.currentTarget) {
+                let targetItem = event.currentTarget;
+                if (!targetItem.classList.contains('nav-item')) {
+                    items.forEach(item => {
+                        if (item.getAttribute('onclick').includes(pageId)) {
+                            item.classList.add('active');
+                        }
+                    });
+                } else {
+                    targetItem.classList.add('active');
+                }
+            }
+
+            // Close mobile sidebar on navigation
+            document.getElementById('sidebar').classList.remove('open');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Image Modal Logic
+        function openModal(element) {
+            const img = element.querySelector('img');
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            
+            modalImg.src = img.src;
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+
+        // Таймер обратного отсчета до 11 октября 2026 года, 00:00:00
+        const targetDate = new Date('October 11, 2026 00:00:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                document.getElementById('countdown').innerHTML = '<div style="color: var(--color-accent); font-weight: 600; font-size: 15px; padding: 10px;">Разбор уже доступен! Ожидайте обновление страницы.</div>';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').innerText = String(days).padStart(2, '0');
+            document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+            document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>
